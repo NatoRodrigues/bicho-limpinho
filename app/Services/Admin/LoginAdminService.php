@@ -4,10 +4,12 @@ namespace App\Services\Admin;
 
 
 use App\Models\Admin;
- 
 use Illuminate\http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Validation\ValidationException;
 
 class LoginAdminService extends Model
 {
@@ -77,10 +79,40 @@ class LoginAdminService extends Model
     }
 
     
+    /**
+     * Atualiza a senha do administrador autenticado.
+     *
+     * @param string $currentPass
+     * @param string $newPass
+     * @param string $newPassConf
+     * @return void
+     * @throws ValidationException
+     */
     
-    
-    
+    public function updatePassword(string $currentPass, $newPass, $newPassConf)
+    {   
+        /** @var \App\Models\Admin $admin */
+        $admin = Auth::guard('admins')->user();
 
-    
+        if (!$admin) {
+            throw new \Exception('Nenhum administrador autenticado encontrado.');
+        }
+        
+        if (!Hash::check($currentPass, $admin->adminPassword)) {
+            throw ValidationException::withMessages([
+                'current_password' => 'A senha atual está incorreta.',
+            ]);
+        }
+
+        if ($newPass !== $newPassConf) {
+            throw ValidationException::withMessages([
+                'new_password' => 'As novas senhas não coincidem.',
+            ]);
+        }
+        
+        $admin->adminPassword = Hash::make($newPass);
+        
+        $admin->save();
+    }
     
 }

@@ -40,8 +40,8 @@
                 </div>
 
                 <div class="bg-gray-100 text-center py-4">
-                    <a href="{{ route('password.request') }}" class="text-blue-500 hover:text-blue-700">
-                        {{ __('Forgot Your Password?') }}
+                    <a href="{{ route('admin.request.password') }}" class="text-blue-500 hover:text-blue-700">
+                        {{ __('Esqueceu sua senha?') }}
                     </a>
                 </div>
             </div>
